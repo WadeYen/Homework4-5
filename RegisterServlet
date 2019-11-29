@@ -1,0 +1,69 @@
+
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+@SuppressWarnings("serial")
+@WebServlet("/RegisterServlet")
+public class RegisterServlet extends HttpServlet {
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// 接受使用者的參數
+				String email = request.getParameter("email");
+				String phoneNum = request.getParameter("phone");
+				
+				// Email 是否符合格式
+				boolean isEmailisValidate = isValidEmailAddress(email);
+				
+				// Email 是否符合格式
+				boolean isValidPhoneNumber = isValidPhoneNumber(phoneNum);
+				
+				if(isEmailisValidate) {
+					// 如果 Email 合法，就導到註冊成功頁
+					request.setAttribute("userEmail", email);
+					if(isValidPhoneNumber) {
+						String url  = "registerFinish.jsp";
+						request.getRequestDispatcher(url).forward(request, response);
+					} else {
+						String url  = "register.jsp";
+						request.getRequestDispatcher(url).forward(request, response);
+					}
+					
+					
+				} else {
+					// 如果 Email 不合法，就導回原來的註冊頁
+					String url  = "register.jsp";
+					request.getRequestDispatcher(url).forward(request, response);
+				}
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+	
+	public boolean isValidEmailAddress(String email) {
+	       String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+	       Pattern p = Pattern.compile(ePattern);
+	       Matcher m = p.matcher(email);
+	       return m.matches();
+	}
+	
+	public boolean isValidPhoneNumber(String phone) {
+	       String ePattern = "[0-9] {10}";
+	       Pattern p = Pattern.compile(ePattern);
+	       Matcher m = p.matcher(phone);
+	       return m.matches();
+	}
+	
+
+}
